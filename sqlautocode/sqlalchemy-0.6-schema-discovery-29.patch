@@ -1,0 +1,17 @@
+--- sqlautocode/main.py.orig	2011-01-05 04:59:50.000000000 +0200
++++ sqlautocode/main.py	2011-01-05 05:09:37.000000000 +0200
+@@ -37,12 +37,9 @@
+     if options.schema != None:
+         reflection_schema=options.schema
+     else:
+-        try:
+-            reflection_schema = db.dialect.get_default_schema_name(conn)
+-        except NotImplementedError:
+-            reflection_schema = None
++        reflection_schema = db.dialect.default_schema_name
+ 
+-    tablenames = db.dialect.table_names(conn, reflection_schema)
++    tablenames = db.dialect.get_table_names(conn, reflection_schema)
+ 
+     # fixme: don't set up output until we're sure there's work to do!
+     if options.tables:

@@ -1,0 +1,40 @@
+# TODO
+
+Here some usefull tasks that could be developed as soon as we could:
+
+ - Do Automatic SQL Backup before sync the tables 
+	( look at main.py line: 38 )
+	We need a procedure to do a backups with creational statements and 
+	insert queries from sqlalchemy. Example in metalanguage:
+	# Backup(db_name) > file.writelines
+
+ - More efficient comparison system for sqlautocode maps. 
+    The unique condition is that sqlautocode produces different outputs 
+    from different database even if their shema/model are identical,
+    with different code lines order, so... Maybe after a shower some 
+    ideas could belongs to someone or to me.
+    Look at main.py, line : 46
+    look at utils.py, line: 29
+    
+ - sorry for eval in FindTableClassName (pysyncdb.py line 13). It couldn't
+    rapresent a security warning :) but if someone could follow his mental 
+    diseases to find a more elegant (or more dispendious, doesn't care) 
+    method to traduce the dbtables names to sqlautocode classes, well, it 
+    will be welcome !
+    
+ - Remeber that SQLAlchemy could manage transaction in more efficient way
+    than I wrote, so It could be better to remove the session.commit inside
+    every CommitAction in pyTableSyncManager and implement some more 
+    efficient and DRY method
+    
+ - Another usefull and prestional aspect: pySyncDB could be faster if 
+    it will abadon the single query commits against a multiple query commits...
+    ... Probably it will be the next update !
+    
+ - I Forgot to free memory between tables syncs, example:
+   ( master.FreeMemory(table_name) and slave.FreeMemory(table_name) )
+   Next I will !
+
+ - It could be nice to have another run method, alongside with "test" and 
+   "execute" it could be usefull to have a sql method to write SQL statements
+   to a file to perform slave syncs manually.

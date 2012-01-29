@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import argparse
+from validator import *
+from settings import *
+
+def ExecuteMasterMap():
+	print 1
+
+def ExecuteSlaveMap():
+	print 2
+
+def Verify_DBMAPS_Folder():
+	try: os.listdir(DB_MAP_FOLDER)
+	except: os.mkdir(DB_MAP_FOLDER)	
+	try: 
+		os.listdir(DB_MAP_FOLDER)
+		return 0
+	except: 
+		raise Exception('DB Maps Directory creation failed in %s !' % DB_MAP_FOLDER )
+		return 1
+		
+	
+	
+DB_CONNECTOR_PATTERN="^[a-z]*://[a-zA-Z0-9]*(:[a-zA-Z0-9]*)?@[a-zA-Z0-9\.]*([:0-9]*?)/[a-zA-Z0-9]*$"
+	
+parser = argparse.ArgumentParser(description='Sync two Databases')
+parser.add_argument('-run', dest='run', action='store',  type=str, choices=['test','execute'], required=True,
+					help='Test Produce only a simulation. Execute does the job !')
+parser.add_argument('--db-master', dest='master', action='store',
+                   required=True, help='es: mysql://user:password@hostname[:3306]/dbname - \ where the data is taken from',
+				   type=RegexValidator(DB_CONNECTOR_PATTERN))
+				   
+parser.add_argument('--db-slave', dest='slave', action='store',
+					type=RegexValidator(DB_CONNECTOR_PATTERN),
+                   required=True, help='es: mysql://user:password@hostname[:3306]/dbname - where we need to store and sync the data taken from master')
+
+args = parser.parse_args()
+#args = parser.parse_args(['-h'])
+#args = parser.parse_args(['test' ,'--db-master=suka@fortex', '--db-slave=sdf@ertert'])
+#args = parser.parse_args(['ciolla' ,'--db-master=suka@fortex', '--db-slave=sdf@ertert'])
+#args = parser.parse_args(['-run=test' ,'--db-master=mysql://root:arturino@192.168.0.212/ultrabet', '--db-slave=mysql://root:arturino@localhost/ultrabet'])
+
+#print args.accumulate(args.integers)

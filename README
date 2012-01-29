@@ -1,0 +1,93 @@
+pySyncDB can syncronize different databases with the same schema/model.
+To use it we must declare the table names we want to syncronize.
+It could syncs different database engines, as MySQL with Oracle, or
+PostgreSQL with MS SQLServer or all others supported by SQLALChemy.
+
+See http://docs.sqlalchemy.org/en/latest/core/engines.html for more
+informations.
+
+
+Dependencies:
+    It was tested with SQLAlchemy version 0.7.4 and 0.6.x.
+        sudo easy_install sqlalchemy
+            or
+        apt-get install python-sqlalchemy
+        
+    If your python version is minor than 2.7 you must install argparse module:
+    
+        sudo apt-get install python-argparse
+            or 
+        sudo easy_install python-argparse
+
+    We need also sqlautocode:
+        sudo easy_install sqlautocode
+
+
+Usage Example:
+    In theese examples we syncronize some database tables from MySQL 
+    (master) to PostgreSQL (slave).
+    
+    From command line:
+        python main.py --no-schemacheck -run test --db-master=mysql://root:xXx@192.168.0.212/ultrabet --db-slave=postgres://root:xXx@127.0.0.1/ultrabet --tables allenatori,allenatori_squadre,annotazioni_squadre,\
+        arbitri_campionato_stagione,campionati,cartellini_incontro,\
+        corner_incontro,rete_minuto_incontro,derby,gruppi,gruppi_campionati_stagioni,\
+        squadre,squadre_campionato_stagione,squadre_seriali,stagioni,\
+        incontri,nazioni,note_incontri,pesi_indicatori,pos_campionato_stagione,\
+        scommesse_campi_significati,soglie_under_over,tab_condizione,tab_range_pesi,\
+        tab_scommesse_campi,tab_stagioni,tab_valori_asiatica,tipo_obiettivo,\
+        tipo_scommessa
+        
+        for help:
+            python main.py -h
+        
+    From python terminal (interactive mode):
+
+        from main import *
+        args = parser.parse_args(['-run=test', '--no-schemacheck' ,'--db-master=mysql://root:xXx@192.168.0.212/ultrabet', '--db-slave=postgres://root:xXx@localhost/ultrabet', '--tables=annotazioni_squadre'])
+        sys.path.append(DB_MAP_FOLDER)
+        
+        from pydbsync import *
+        master = SessionManager('master', args.master)
+        slave = SessionManager('slave', args.slave)
+        
+        # here some hints to use sqlalchemy in a more simple way :)
+        
+        # get all the tables name from the master db:
+        master.Tables  
+        
+        # get all the primarykeys for every table in dictionary format:
+        master.Tables_PrimaryKeys
+        
+        # to work on a single table we can use use the Db original table name
+        # or the sqlautocode class name, examples:
+        master.ManageTable('annotazioni_squadre')
+            or
+        master.ManageTable(AnnotazioniSquadre)
+        
+        # after that we have some new methods, like:
+        master.Query_annotazioni_squadre
+        
+        # it is a shortcut of sessionmaker().session.query(table_name), so:
+        master.Query_annotazioni_squadre.all()
+        
+        # to free memory when we finished to work on the table:
+        master.FreeMemory('annotazioni_squadre')
+
+        g = pyTableSyncManager(master, slave, args.table, args.run)
+        
+        g.InspectTable()
+        
+        g.HaveSameRecordNumber()
+        
+        if g.ProposedUpdates:
+            g.CommitUpdates()
+        
+        if g.ProposedInsertions:
+            g.CommitInsertions()
+        
+        if g.ProposedDeletions:
+            g.CommitDeletions()
+
+BUGs:
+    sqlautocode doesn't support "/" characters inside the password. So if 
+    you use a password with "/" keep in mind to change it before !

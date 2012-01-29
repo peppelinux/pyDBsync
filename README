@@ -1,4 +1,7 @@
 pySyncDB can syncronize different databases with the same schema/model.
+
+pySyncDB can syncronize tables that have composite primary keys.
+
 To use it we must declare the table names we want to syncronize.
 It could syncs different database engines, as MySQL with Oracle, or
 PostgreSQL with MS SQLServer or all others supported by SQLALChemy.
